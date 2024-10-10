@@ -1,0 +1,268 @@
+	-------Circle.java-------------
+package com.demo.beans;
+public class Circle extends Shape{
+ private float radius;
+ static final float pi=3.142f;
+public Circle() {
+	super();
+}
+public Circle(String c,float radius) {
+	super(c);
+	this.radius = radius;
+}
+public float getRadius() {
+	return radius;
+}
+public void setRadius(float radius) {
+	this.radius = radius;
+}
+public float calcArea() {
+	return pi*radius*radius;
+}
+public float calcPerimeter() {
+	return 2*pi*radius;
+}
+@Override
+public String toString() {
+	return super.toString()+"Circle [radius=" + radius + "]";
+}
+}
+	------Rectangele.java---------
+package com.demo.beans;
+public class Rectangle extends Shape{
+	private float len, b;
+	public Rectangle() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Rectangle(String color) {
+		super(color);
+		// TODO Auto-generated constructor stub
+	}
+	public Rectangle(float b, float len) {
+		super();
+		this.b = b;
+		this.len = len;
+	}
+	public float getB() {
+		return b;
+	}
+	public void setB(float b) {
+		this.b = b;
+	}
+	public float getLen() {
+		return len;
+	}
+	public void setLen(float len) {
+		this.len = len;
+	}
+	public float calcArea() {
+		return len*b;
+	}
+	public float calcPerimeter() {
+		return 2*(len+b);
+	}
+	@Override
+	public String toString() {
+		return "Rectangle [b=" + b + ", len=" + len + "]";
+	}	
+}
+		----------Triangle.Java----------
+package com.demo.beans;
+public class Triangle extends Shape{
+	private float base,height,s1,s2;
+	public Triangle() {
+		super();
+	}
+	public Triangle(String c,float base, float height, float s1, float s2) {
+		super(c);
+		this.base = base;
+		this.height = height;
+		this.s1 = s1;
+		this.s2 = s2;
+	}
+	public float getBase() {
+		return base;
+	}
+	public void setBase(float base) {
+		this.base = base;
+	}
+	public float getHeight() {
+		return height;
+	}
+	public void setHeight(float height) {
+		this.height = height;
+	}
+	public float getS1() {
+		return s1;
+	}
+	public void setS1(float s1) {
+		this.s1 = s1;
+	}
+	public float getS2() {
+		return s2;
+	}
+	public void setS2(float s2) {
+		this.s2 = s2;
+	}
+	public void m1() {
+		System.out.println("in Triangle m1()");
+	}
+	public float calcArea() {
+		return 0.5f*base*height;
+	}
+	@Override
+	public float calcPerimeter() {
+		return base+s1+s2;
+	}
+	public void m2() {
+		System.out.println("in shape m2()");
+	}
+	@Override
+	public String toString() {
+		return super.toString()+"Triangle [base=" + base + ", height=" + height + ", s1=" + s1 + ", s2=" + s2 + "]";
+	}
+}
+-----------Shape.java-------------
+package com.demo.beans;
+abstract public class Shape {
+	private String color;
+	public Shape() {
+		super();
+	}
+	public Shape(String color) {
+		super();
+		this.color = color;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+	@Override
+	public String toString() {
+		return "Shape [color=" + color + "]";
+	}
+	protected void m1() {
+		System.out.println("in shape m1()");
+	}
+	public  void m2() {
+		System.out.println("in shape m2()");
+	}
+	abstract public float calcArea();
+	abstract public float calcPerimeter();
+}
+
+---------------MyClass----
+package com.demo.beans;
+
+public class MyClass {
+	private int id;
+	final String c;
+	public MyClass() {
+		super();
+		c="Hello";
+	}
+	public MyClass(int id) {
+		super();
+		this.c="Welcome";
+	}
+}
+	-----------ShapeService----------
+package com.demo.service;
+import java.util.Scanner;
+import com.demo.beans.Circle;
+import com.demo.beans.Rectangle;
+import com.demo.beans.Shape;
+import com.demo.beans.Triangle;
+public class ShapeService {
+	static Shape[] sarr;
+	static int cnt;
+	static {
+		sarr=new Shape[5];
+		cnt=0;
+	}
+    //@SuppressWarnings(value = { "" })
+	public static void acceptData(int choice) {
+		Scanner sc=new Scanner(System.in);
+		System.out.println("enter color");
+		String color=sc.next();
+		switch(choice) {
+		case 1:
+			System.out.println("enter base");
+			float b=sc.nextFloat();
+			System.out.println("enter height");
+			float h=sc.nextFloat();
+			System.out.println("enter side1");
+			float s1=sc.nextFloat();
+			System.out.println("enter side2");
+			float s2=sc.nextFloat();
+			sarr[cnt]=new Triangle(color,b,h,s1,s2);
+			break;
+		case 2:
+			System.out.println("enter radius");
+			float r=sc.nextFloat();
+			sarr[cnt]=new Circle(color,r);
+			break;
+		case 3:
+			System.out.println("enter Length ");
+			float leng=sc.nextFloat();
+			System.out.println("enter Breadth ");
+			float bh=sc.nextFloat();
+			sarr[cnt]=new Rectangle(leng,bh);
+			break;
+		}
+		cnt++;
+		
+	}
+	public static void calculateDetails(int pos) {
+		System.out.println(pos+" : Area: "+sarr[pos].calcArea());
+		System.out.println(pos+" : perimeter: "+sarr[pos].calcPerimeter());
+	}
+	public static Shape[] getAllShapes() {
+		return sarr;
+	}
+
+}
+----------------TestShape.Java-----------------
+
+package com.demo.test;
+import java.util.Scanner;
+import com.demo.beans.Circle;
+import com.demo.beans.Shape;
+import com.demo.beans.Triangle;
+import com.demo.service.ShapeService;
+public class TestShape {
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);	
+		int choice=0;
+		for(int i=0;i<5;i++) {
+		  System.out.println("1. Triangle\n2 Circle\n3. Rectangle\n choice: ");
+		  choice=sc.nextInt();
+		  ShapeService.acceptData(choice);
+		}
+		for(int i=0;i<5;i++) {
+			ShapeService.calculateDetails(i);
+		}
+		int cntTraingle=0;
+		int cntCircle=0;
+		int cntRectangle=0;
+		Shape[] sarr=ShapeService.getAllShapes();
+		for(int i=0;i<sarr.length;i++) {
+			if(sarr[i] instanceof Triangle) {
+				cntTraingle++;
+			}else if(sarr[i] instanceof Circle) {
+				cntCircle++;
+			}else {
+				cntRectangle++;
+			}			
+		}
+		System.out.println("Triangle Count: "+cntTraingle);		
+		System.out.println("Circle Count: "+cntCircle);
+		System.out.println("Rectangle Count: "+cntRectangle);
+		
+	}
+
+}
+

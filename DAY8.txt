@@ -1,0 +1,630 @@
+                	
+
+		-----TestStudentListCollection----
+package com.demo.test;
+import java.util.List;
+import java.util.Scanner;
+import com.demo.beans.Student;
+import com.demo.service.StudentService;
+import com.demo.service.StudentServiceImpl;
+
+public class TestStudentListCollection {
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		StudentService sservice=new StudentServiceImpl();
+		int choice=0;
+		do {
+		System.out.println("1. add new student\n2. delete student by id\n 3. modify marks\n4. search by id");
+		System.out.println("5. search by marks > given marks\n6. sort by id\n 7. sort by name\n8. sort by marks");
+		System.out.println("9.display all\n10. search by name and display in sorted order\n 11. exit\nchoice:");
+	    choice=sc.nextInt();
+	    //text block
+	    //String s= """ 
+	    //		  this is multiline string
+        //          testing""";
+	    //new Switch case syntax
+	    switch(choice) {
+	    case 1->{
+	         System.out.println("1. MasterStudent\n 2. GraduateStudent\n3. faculty\n choice: ");
+	         int ch=sc.nextInt();
+	         sservice.addnewStudent(ch);
+	    }
+	    case 2->{
+	    	System.out.println("enter id for delete");
+	    	int id=sc.nextInt();
+	    	boolean status=sservice.deleteById(id);
+	    	if(status) {
+	    		System.out.println("deleted successfully");
+	    	}else {
+	    		System.out.println("not found");
+	    	}
+	    	
+	    }
+	    case 3->{
+	    	System.out.println("enter id for delete");
+	    	int id=sc.nextInt();
+	    	System.out.println("enter marks to modify");
+	    	int newmarks=sc.nextInt();
+	    	boolean status=sservice.modifyStudentMarks(id,newmarks);
+	    	if(status) {
+	    		System.out.println("updation done successfully");
+	    	}else {
+	    		System.out.println("not found");
+	    	}
+	    }
+	    case 4->{
+	    	System.out.println("enter id");
+	    	int id=sc.nextInt();
+	    	Student s=sservice.getById(id);
+	    	if(s!=null) {
+	    		System.out.println(s);
+	    	}else {
+	    		System.out.println("not found");
+	    	}
+	    }
+	    case 5->{
+	    	System.out.println("enter marks for searching");
+	    	int mks=sc.nextInt();
+	    	List<Student> lst=sservice.getByMarks(mks);
+	    	if(lst!=null) {
+	    		lst.stream().forEach(ob->System.out.println(ob));
+	    	}else {
+	    		System.out.println("Not found");
+	    	}
+	    }
+	    case 6->{
+	    	List<Student> lst=sservice.sortById();
+	    	lst.stream().forEach(System.out::println);
+	    }
+	    case 7->{
+	    	List<Student> lst=sservice.sortByName();
+    	     lst.stream().forEach(System.out::println);}
+	    case 8->{List<Student> lst=sservice.sortByMarks();
+	     lst.stream().forEach(System.out::println);
+	     }
+	    case 9->{
+	    	List<Student> slst=sservice.getAllStudents();
+	    	slst.stream().forEach(System.out::println);
+	    }
+	    case 10->{
+	    	System.out.println("enter name");
+	    	String nm=sc.next();
+	    	List<Student> lst=sservice.getByName(nm);
+	    	if(lst!=null) {
+	    		lst.stream().forEach(ob->System.out.println(ob));
+	    	}else {
+	    		System.out.println("Not found");
+	    	}
+	    }
+	    case 11->{}
+	    default->System.out.println("Wrong choice");
+	    }
+		}while(choice!=11);
+	}
+}
+
+
+	--------TestArrayList------------
+
+package com.demo.test;
+import java.util.ArrayList;
+import java.util.List;
+public class TestArrayList {
+	public static void main(String[] args) {
+		List<Integer> lst=new ArrayList<>();  //diamond operator
+		lst.add(12);
+		lst.add(20);
+		lst.add(30);
+		System.out.println("index position :"+lst.indexOf(20));
+		System.out.println("contains :"+lst.contains(20));
+		List<Integer> lst1=List.of(11,22,11,3,4,2,3,3,4,5,6,7,8,9,0,11,11,11,11);
+		//lst1.add(23);
+		lst1.stream().forEach(System.out::println);	
+	}
+}
+
+		------------StudentServiceImpl----------
+
+package com.demo.service;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Scanner;
+import com.demo.beans.GraduateStudent;
+import com.demo.beans.MasterStudent;
+import com.demo.beans.Student;
+import com.demo.dao.StudentDao;
+import com.demo.dao.StudentDaoImpl;
+public class StudentServiceImpl implements StudentService {
+	private StudentDao sdao;
+	public StudentServiceImpl() {
+		super();
+		sdao=new StudentDaoImpl();
+	}
+	@Override
+	public void addnewStudent(int ch) {
+		Scanner sc=new Scanner(System.in); 
+		System.out.println("enter student id");
+		int id=sc.nextInt();
+		System.out.println("enter name");
+		String nm=sc.next();
+		System.out.println("enter address");
+		String addr=sc.next();
+		System.out.println("enter birth date(dd/MM/yyyy)");
+		String bdt=sc.next();
+
+		LocalDate ldt=LocalDate.parse(bdt, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		int[] mks=new int[2];
+		if(ch==1 || ch==2) {
+			System.out.println("enetr marks 1");
+			mks[0]=sc.nextInt();
+			System.out.println("enetr marks 2");
+			mks[1]=sc.nextInt();
+		}
+		Student s=null;
+		if(ch==1) {
+			System.out.println("enter thesis sub");
+			String sub=sc.next();
+			System.out.println("enter graduation degree");
+			String degree=sc.next();
+			System.out.println("enter thesis marks");
+			int marks=sc.nextInt();
+			s=new MasterStudent(id, nm, addr, ldt, mks, sub, degree, marks);		
+		}else if (ch==2){
+			System.out.println("enter Special subject marks");
+			int marks=sc.nextInt();
+		    s=new GraduateStudent(id, nm, addr, ldt, mks, marks);
+		}else {
+			//accept details for faculty
+		}
+		sdao.addStudent(s);		
+	}
+	@Override
+	public List<Student> getAllStudents() {
+		return sdao.findAllStudent();
+	}
+	@Override
+	public Student getById(int id) {
+		return sdao.findById(id);
+	}
+	@Override
+	public boolean deleteById(int id) {
+		return sdao.removeById(id);
+	}
+	@Override
+	public boolean modifyStudentMarks(int id, int newmarks) {
+		return sdao.updateMarks(id,newmarks);
+	}
+	@Override
+	public List<Student> getByMarks(int mks) {
+		return sdao.findByMarks(mks);
+	}
+	@Override
+	public List<Student> getByName(String nm) {
+		return sdao.findByName(nm);
+	}
+	@Override
+	public List<Student> sortById() {
+		return sdao.sortById();
+	}
+	@Override
+	public List<Student> sortByName() {
+		return sdao.sortByName();
+	}
+	@Override
+	public List<Student> sortByMarks() {
+		return sdao.sortByMarks();	
+	}
+}
+
+	 ---------StudentService-------
+
+package com.demo.service;
+import java.util.List;
+import com.demo.beans.Student;
+public interface StudentService {
+	void addnewStudent(int ch);
+	List<Student> getAllStudents();
+	Student getById(int id);
+	boolean deleteById(int id);
+	boolean modifyStudentMarks(int id, int newmarks);
+	List<Student> getByMarks(int mks);
+	List<Student> getByName(String nm);
+	List<Student> sortById();
+	List<Student> sortByName();
+	List<Student> sortByMarks();
+}
+
+		----------------StudentDaoImpl--------------------
+
+package com.demo.dao;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.demo.beans.GraduateStudent;
+import com.demo.beans.MasterStudent;
+import com.demo.beans.Person;
+import com.demo.beans.Student;
+import com.demo.comparators.MyMarksComparator;
+import com.demo.comparators.MyNameComparator;
+
+public class StudentDaoImpl implements StudentDao{
+	private static List<Student> studlst; 
+	static {
+		studlst=new ArrayList<>();
+		studlst.add(new GraduateStudent(12, "Manjiri", "Pune", LocalDate.of(2000, 01, 03), new int[] {88,87},89));
+		studlst.add(new GraduateStudent(13, "Mugdha", "Pune", LocalDate.of(1999, 02, 13), new int[] {78,75},77));
+    	studlst.add(new MasterStudent(14, "Sahil", "Mumbai", LocalDate.of(2002, 01, 03), new int[] {88,87},"accounts","BCOM",89));
+	}
+	@Override
+	public void addStudent(Student s) {
+		studlst.add(s);
+	}
+	@Override
+	public List<Student> findAllStudent() {
+		return studlst;
+	}
+	@Override
+	public Student findById(int id) {
+		//internally calls equals method of person class
+		int pos=studlst.indexOf(new Person(id));
+		if(pos!=-1) {
+			//retrieves the student object from the given position
+			return studlst.get(pos);
+		}
+		return null;
+	}
+	@Override
+	public boolean removeById(int id) {
+		//delete the first matching object
+		return studlst.remove(new Person(id));
+		//to delete all the objects which satisfies the condition
+		//studlst.removeIf(ob->ob.getMarks()[0]>50);
+	}
+	@Override
+	public boolean updateMarks(int id, int newmarks) {
+		Student s=findById(id);
+		if(s!=null) {
+			if(s instanceof MasterStudent) {
+				((MasterStudent)s).setThesismarks(newmarks);
+				return true;
+			}else if(s instanceof GraduateStudent ) {
+				((GraduateStudent)s).setSpsub(newmarks);
+				return true;
+			}
+				
+		}
+		return false;
+	}
+	@Override
+	public List<Student> findByMarks(int mks) {
+		List<Student> lst=new ArrayList<>();
+		for(Student s:studlst) {
+			if(s instanceof MasterStudent) {
+				if(((MasterStudent)s).getThesismarks()>mks)
+					lst.add(s);
+			}else if(s instanceof GraduateStudent) {
+				if(((GraduateStudent)s).getSpsub()>mks)
+					lst.add(s);
+			}
+				
+		}
+		if(lst.size()>0)
+			return lst;
+		else
+			return null;
+	}
+	@Override
+	public List<Student> findByName(String nm) {
+		//java 1.7
+		/*List<Student> lst=new ArrayList<>();
+		for(Student s:studlst) {
+			if(s.getPname().equals(nm)) {
+				lst.add(s);
+			}
+		}*/
+		//java 1.8
+		List<Student> lst=studlst.stream()
+				.filter(ob->ob.getPname().equals(nm))
+				.collect(Collectors.toList());
+		if(lst.size()>0) {
+			return lst;
+		}
+		return null;
+	}
+	@Override
+	public List<Student> sortById() {
+		List<Student> lst=new ArrayList<>(studlst.size());
+		//Collections.copy(lst, studlst);
+		for(Student s:studlst) {
+			lst.add(s);
+		}
+		//lst.stream().forEach(System.out::println);
+		lst.sort(null);
+		return lst;
+	}
+	@Override
+	public List<Student> sortByName() {
+		List<Student> lst=new ArrayList<>(studlst.size());
+		//Collections.copy(lst, studlst);
+		//create a copy of the list
+		for(Student s:studlst) {
+			lst.add(s);
+		}
+		//lst.stream().forEach(System.out::println);
+		lst.sort(new MyNameComparator());
+		return lst;
+	}
+	@Override
+	public List<Student> sortByMarks() {
+		List<Student> lst=new ArrayList<>(studlst.size());
+		//Collections.copy(lst, studlst);
+		//create a copy of the list
+		for(Student s:studlst) {
+			lst.add(s);
+		}
+		//lst.stream().forEach(System.out::println);
+		lst.sort(new MyMarksComparator());
+		return lst;
+	}
+}
+
+       ----------------StudentDao------------------
+package com.demo.dao;
+import java.util.List;
+import com.demo.beans.Student;
+public interface StudentDao {
+	void addStudent(Student s);
+	List<Student> findAllStudent();
+	Student findById(int id);
+	boolean removeById(int id);
+	boolean updateMarks(int id, int newmarks);
+	List<Student> findByMarks(int mks);
+	List<Student> findByName(String nm);
+	List<Student> sortById();
+	List<Student> sortByName();
+	List<Student> sortByMarks();
+
+}
+
+	---------------- MyMarksComparator--------------------
+package com.demo.comparators;
+import java.util.Comparator;
+import com.demo.beans.GraduateStudent;
+import com.demo.beans.MasterStudent;
+import com.demo.beans.Person;
+
+public class MyMarksComparator implements Comparator<Person>{
+	@Override
+	public int compare(Person o1, Person o2) {
+		int m1=0,m2=0;
+		if(o1 instanceof MasterStudent)
+			m1=((MasterStudent)o1).getThesismarks();
+		else if(o1 instanceof GraduateStudent) {
+			m1=((GraduateStudent)o1).getSpsub();
+		}
+		if(o2 instanceof MasterStudent)
+			m2=((MasterStudent)o2).getThesismarks();
+		else if(o2 instanceof GraduateStudent) {
+			m2=((GraduateStudent)o2).getSpsub();
+		}
+		return m1-m2;
+	}
+}
+
+	----------------MyNameComparator-----------------
+
+package com.demo.comparators;
+
+import java.util.Comparator;
+
+import com.demo.beans.Person;
+public class MyNameComparator implements Comparator<Person> {
+
+	@Override
+	public int compare(Person o1, Person o2) {
+		System.out.println("In compare method MyNameComparator : "+o1.getPname()+"-----"+o2.getPname());
+		return  o1.getPname().compareTo(o2.getPname());
+	}
+
+}
+
+		--------------Person------------------
+
+package com.demo.beans;
+import java.time.LocalDate;
+public class Person implements Comparable<Person>{
+	private int pid;
+	private String pname;
+	private String address;
+	private LocalDate bdate;
+
+	public Person() {
+		super();
+		//System.out.println("in Person default constructor");
+	}
+	public Person(int pid) {
+		super();
+		this.pid = pid;
+	}
+	public Person(int pid, String pname, String address, LocalDate bdate) {
+		super();
+		//System.out.println("in person parametrized constructor");
+		//change the code to autogenerate ID, 
+		// faculty Id should start with f, masterStudent id should starts with m
+		//and graduate student id should start with g
+		this.pid = pid;
+		this.pname = pname;
+		this.address = address;
+		this.bdate = bdate;
+	}
+	public int getPid() {
+		return pid;
+	}
+	public void setPid(int pid) {
+		this.pid = pid;
+	}
+	public String getPname() {
+		return pname;
+	}
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public LocalDate getBdate() {
+		return bdate;
+	}
+	public void setBdate(LocalDate bdate) {
+		this.bdate = bdate;
+	}	
+	@Override
+	public boolean equals(Object obj) {
+		Person other = (Person) obj;
+		System.out.println("in equals of Person : "+this.pid+"----"+other.pid);
+		return this.pid==other.pid;
+	}
+	@Override
+	public String toString() {
+		return "Person [pid=" + pid + ", pname=" + pname + ", address=" + address + ", bdate=" + bdate + "]";
+	}
+	@Override
+	public int compareTo(Person o) {
+		System.out.println("in compareTo person: "+this.pid+"-----"+o.pid);
+		if(this.pid<o.pid)
+			   return -1;
+		else if(this.pid==o.pid)
+			return 0;
+		else 
+			return 1;
+		//return this.pid-o.pid
+		//return this.pname.compareTo(o.pname);		  
+	}
+}
+
+	----------------Student-------------------
+
+package com.demo.beans;
+import java.time.LocalDate;
+import java.util.Arrays;
+
+abstract public class Student extends Person{
+	protected int[] marks;
+	public Student() {
+		System.out.println("in student default constructor");
+	}
+	public Student(int pid, String pname, String address, LocalDate bdate,int[] marks) {
+		super(pid,pname,address,bdate);  //calls parametrized constructor of parent
+		//System.out.println("in student parametrized constructor");
+		this.marks = marks;
+	}
+	public int[] getMarks() {
+		return marks;
+	}
+	public void setMarks(int[] marks) {
+		this.marks = marks;
+	}
+	abstract public float calculateGrade();
+
+	@Override
+	public String toString() {
+		return super.toString()+"Student [marks=" + Arrays.toString(marks) + "]";
+	}
+	
+
+}
+
+
+	-----------GraduateStudent-----------
+package com.demo.beans;
+import java.time.LocalDate;
+
+public class GraduateStudent extends Student{
+	private int spsub;
+
+	public GraduateStudent() {
+		super();
+	}
+
+	public GraduateStudent(int pid, String pname, String address, LocalDate bdate,int[] marks,int spsub) {
+		//calls parametrised constructor
+		//use super, then that line has to be the first line of the function
+		super(pid,pname,address,bdate,marks);
+		//System.out.println("in GrduateStudent parametrized constructor");
+		this.spsub = spsub;
+	}
+	public int getSpsub() {
+		return spsub;
+	}
+	public void setSpsub(int spsub) {
+		this.spsub = spsub;
+	}
+	//function overriding
+	public float calculateGrade() {
+		//int[] mks=this.getMarks();
+		//return mks[0]+mks[1]+spsub;
+		return ((marks[0]+marks[1])*0.50f)+spsub;
+	}
+	@Override
+	public String toString() {
+		return super.toString()+"GraduateStudent [spsub=" + spsub + "]";
+	}
+}
+
+		-------------MasterStudent---------------
+package com.demo.beans;
+import java.time.LocalDate;
+
+public class MasterStudent extends Student{
+	private String thesissub,degree;
+	private int thesismarks;
+	public MasterStudent() {
+		super();
+	}
+	public MasterStudent(int pid, String pname, String address, LocalDate bdate,int[] marks,String thesissub, String degree, int thesismarks) {
+		//calls parametrised constructor
+				//use super, then that line has to be the first line of the function
+		super(pid,pname,address,bdate,marks);
+		//System.out.println("in MasterStudent parametrized constructor");
+		this.thesissub = thesissub;
+		this.degree = degree;
+		this.thesismarks = thesismarks;
+	}
+	public String getThesissub() {
+		return thesissub;
+	}
+	public void setThesissub(String thesissub) {
+		this.thesissub = thesissub;
+	}
+	public String getDegree() {
+		return degree;
+	}
+	public void setDegree(String degree) {
+		this.degree = degree;
+	}
+	public int getThesismarks() {
+		return thesismarks;
+	}
+	public void setThesismarks(int thesismarks) {
+		this.thesismarks = thesismarks;
+	}
+	public float calculateGrade() {
+		//int[] mks=this.getMarks();
+		//return mks[0]+mks[1]+spsub;
+		return ((marks[0]+marks[1])*0.20f)+thesismarks;
+	}
+	@Override
+	public String toString() {
+		return super.toString()+"MasterStudent [thesissub=" + thesissub + ", degree=" + degree + ", thesismarks=" + thesismarks + "]";
+	}
+}
+
+
+
